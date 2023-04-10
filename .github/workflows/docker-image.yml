@@ -3,16 +3,29 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
 
   build:
 
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        packer_version:
+          - '1.8'
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag andych/packer-ansible:$(date +%s)
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: andych
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build and push the Docker image
+      uses: docker/build-push-action@v4
+      with:
+        push: true
+        tags: andych/packer-ansible:${{ matrix.packer_version }}
+        build-args: |
+          packer_version=${{ matrix.packer_version }}
