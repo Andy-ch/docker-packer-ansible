@@ -22,6 +22,8 @@ jobs:
       with:
         username: andych
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Set up QEMU for multi-platform Docker build
+      uses: docker/setup-qemu-action@v2
     - name: Build and push the Docker image
       uses: docker/build-push-action@v4
       with:
@@ -29,3 +31,4 @@ jobs:
         tags: andych/packer-ansible:${{ matrix.packer_version }}
         build-args: |
           packer_version=${{ matrix.packer_version }}
+        platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm64
