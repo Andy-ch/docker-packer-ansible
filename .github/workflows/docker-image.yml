@@ -6,15 +6,38 @@ on:
   workflow_dispatch:
 
 jobs:
-
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      packer_versions: ${{ steps.build_versions.outputs.value }}
+    steps:
+      - name: Get a list of Hashicorp Packer versions
+        id: hashicorp_versions
+        run: echo "value=$(hub-tool tag ls --all --format json hashicorp/packer)" >> "${GITHUB_OUTPUT}"
+      - name: Get a list of my packer-ansible versions
+        id: my_versions
+        run: echo "value=$(hub-tool tag ls --all --format json andych/packer-ansible)" >> "${GITHUB_OUTPUT}"
+      - name: Evaluate packer versions to build
+        id: build_versions
+        shell: python
+        run: |
+          import os
+          import json
+          hashicorp_versions = '''${{ steps.hashicorp_versions.outputs.value }}'''
+          my_versions = '''${{ steps.my_versions.outputs.value }}'''
+          hashicorp_versions = json.loads(hashicorp_versions)
+          my_versions = json.loads(my_versions)
+          hashicorp_versions = set([version['Name'].split(':')[1] for version in hashicorp_versions])
+          my_versions = set([version['Name'].split(':')[1] for version in my_versions])
+          build_versions = list(hashicorp_versions - my_versions)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fo:
+              json.dump(build_versions, fo)
   build:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        packer_version:
-          - '1.8'
+        packer_version: ${{ fromJson(needs.setup.outputs.packer_versions) }}
     steps:
     - uses: actions/checkout@v3
     - name: Log in to Docker Hub
