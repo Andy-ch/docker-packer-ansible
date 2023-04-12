@@ -11,12 +11,17 @@ jobs:
     outputs:
       packer_versions: ${{ steps.build_versions.outputs.value }}
     steps:
+      - name: Download and install hub-tool
+        run: |
+          wget https://github.com/docker/hub-tool/releases/download/v0.4.5/hub-tool-linux-amd64.tar.gz
+          tar xf hub-tool-linux-amd64.tar.gz
+          mv hub-tool/hub-tool ./
       - name: Get a list of Hashicorp Packer versions
         id: hashicorp_versions
-        run: echo "value=$(hub-tool tag ls --all --format json hashicorp/packer)" >> "${GITHUB_OUTPUT}"
+        run: echo "value=$(./hub-tool tag ls --all --format json hashicorp/packer)" >> "${GITHUB_OUTPUT}"
       - name: Get a list of my packer-ansible versions
         id: my_versions
-        run: echo "value=$(hub-tool tag ls --all --format json andych/packer-ansible)" >> "${GITHUB_OUTPUT}"
+        run: echo "value=$(./hub-tool tag ls --all --format json andych/packer-ansible)" >> "${GITHUB_OUTPUT}"
       - name: Evaluate packer versions to build
         id: build_versions
         shell: python
