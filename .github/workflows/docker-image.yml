@@ -18,7 +18,12 @@ jobs:
           mv hub-tool hub-tool-dist
           mv hub-tool-dist/hub-tool ./
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}"|./hub-tool login andych
+        shell: expect
+        run: |
+          spawn ./hub-tool login andych
+          expect "Password:"
+          send "${{ secrets.DOCKERHUB_TOKEN }}\n"
+          interact
       - name: Get a list of Hashicorp Packer versions
         id: hashicorp_versions
         run: echo "value=$(./hub-tool tag ls --all --format json hashicorp/packer)" >> "${GITHUB_OUTPUT}"
