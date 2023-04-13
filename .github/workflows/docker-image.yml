@@ -46,6 +46,7 @@ jobs:
           build_versions = hashicorp_versions - my_versions
           build_versions.add('latest')
           build_versions = list(build_versions)
+          print(build_versions)
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fo:
               fo.write('value=')
               json.dump(build_versions, fo)
