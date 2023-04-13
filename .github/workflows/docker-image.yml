@@ -20,7 +20,7 @@ jobs:
       - name: Install Pexpect PyPI package
         run: pip3 install pexpect
       - name: Log in to Docker Hub
-        shell: python3
+        shell: python
         run: |
           import pexpect
           child = pexpect.spawn('./hub-tool login andych')
@@ -35,7 +35,7 @@ jobs:
         run: echo "value=$(./hub-tool tag ls --all --format json andych/packer-ansible)" >> "${GITHUB_OUTPUT}"
       - name: Evaluate packer versions to build
         id: build_versions
-        shell: python3
+        shell: python
         run: |
           import os
           import json
