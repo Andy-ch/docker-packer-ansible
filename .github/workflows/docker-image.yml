@@ -29,20 +29,20 @@ jobs:
           child.expect(pexpect.EOF)
       - name: Get a list of Hashicorp Packer versions
         id: hashicorp_versions
-        run: echo "value=$(./hub-tool tag ls --all --format json hashicorp/packer)" >> "${GITHUB_OUTPUT}"
+        run: ./hub-tool tag ls --all --format json hashicorp/packer > /tmp/hashicorp_versions.json
       - name: Get a list of my packer-ansible versions
         id: my_versions
-        run: echo "value=$(./hub-tool tag ls --all --format json andych/packer-ansible)" >> "${GITHUB_OUTPUT}"
+        run: ./hub-tool tag ls --all --format json andych/packer-ansible > /tmp/my_versions.json
       - name: Evaluate packer versions to build
         id: build_versions
         shell: python
         run: |
           import os
           import json
-          hashicorp_versions = '''${{ steps.hashicorp_versions.outputs.value }}'''
-          my_versions = '''${{ steps.my_versions.outputs.value }}'''
-          hashicorp_versions = json.loads(hashicorp_versions)
-          my_versions = json.loads(my_versions)
+          with open('/tmp/hashicorp_versions.json') as fo:
+              hashicorp_versions = json.load(fo)
+          with open('/tmp/my_versions.json') as fo:
+              my_versions = json.load(fo)
           hashicorp_versions = set([version['Name'].split(':')[1] for version in hashicorp_versions])
           my_versions = set([version['Name'].split(':')[1] for version in my_versions])
           build_versions = list(hashicorp_versions - my_versions)
