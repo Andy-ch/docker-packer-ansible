@@ -17,6 +17,7 @@ jobs:
           tar xf hub-tool-linux-amd64.tar.gz
           mv hub-tool hub-tool-dist
           mv hub-tool-dist/hub-tool ./
+          find / -name expect
       - name: Log in to Docker Hub
         shell: expect
         run: |
