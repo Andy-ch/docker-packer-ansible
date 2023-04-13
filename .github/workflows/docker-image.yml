@@ -17,8 +17,6 @@ jobs:
           tar xf hub-tool-linux-amd64.tar.gz
           mv hub-tool hub-tool-dist
           mv hub-tool-dist/hub-tool ./
-      - name: Install Pexpect PyPI package
-        run: pip3 install pexpect
       - name: Log in to Docker Hub
         shell: python
         run: |
@@ -45,8 +43,9 @@ jobs:
               my_versions = json.load(fo)
           hashicorp_versions = set([version['Name'].split(':')[1] for version in hashicorp_versions])
           my_versions = set([version['Name'].split(':')[1] for version in my_versions])
-          build_versions = list(hashicorp_versions - my_versions)
+          build_versions = hashicorp_versions - my_versions
           build_versions.add('latest')
+          build_versions = list(build_versions)
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fo:
               fo.write('value=')
               json.dump(build_versions, fo)
