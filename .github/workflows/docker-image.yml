@@ -15,7 +15,8 @@ jobs:
         run: |
           wget https://github.com/docker/hub-tool/releases/download/v0.4.5/hub-tool-linux-amd64.tar.gz
           tar xf hub-tool-linux-amd64.tar.gz
-          mv hub-tool/hub-tool ./
+          mv hub-tool hub-tool-dist
+          mv hub-tool-dist/hub-tool ./
       - name: Get a list of Hashicorp Packer versions
         id: hashicorp_versions
         run: echo "value=$(./hub-tool tag ls --all --format json hashicorp/packer)" >> "${GITHUB_OUTPUT}"
