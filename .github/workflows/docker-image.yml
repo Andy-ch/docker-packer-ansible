@@ -46,7 +46,9 @@ jobs:
           hashicorp_versions = set([version['Name'].split(':')[1] for version in hashicorp_versions])
           my_versions = set([version['Name'].split(':')[1] for version in my_versions])
           build_versions = list(hashicorp_versions - my_versions)
+          build_versions.add('latest')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fo:
+              fo.write('value=')
               json.dump(build_versions, fo)
   build:
     runs-on: ubuntu-latest
