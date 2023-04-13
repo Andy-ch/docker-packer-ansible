@@ -26,7 +26,7 @@ jobs:
           child = pexpect.spawn('./hub-tool login andych')
           child.expect("Password:")
           child.sendline("${{ secrets.DOCKERHUB_TOKEN }}")
-          child.interact()
+          child.expect(pexpect.EOF)
       - name: Get a list of Hashicorp Packer versions
         id: hashicorp_versions
         run: echo "value=$(./hub-tool tag ls --all --format json hashicorp/packer)" >> "${GITHUB_OUTPUT}"
