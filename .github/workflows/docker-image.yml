@@ -52,6 +52,8 @@ jobs:
               json.dump(build_versions, fo)
   build:
     runs-on: ubuntu-latest
+    needs:
+      - setup
     strategy:
       fail-fast: false
       matrix:
