@@ -43,6 +43,7 @@ jobs:
               hashicorp_versions = json.load(fo)
           with open('/tmp/my_versions.json') as fo:
               my_versions = json.load(fo)
+          my_versions = []
           hashicorp_versions = set([version['Name'].split(':')[1] for version in hashicorp_versions])
           my_versions = set([version['Name'].split(':')[1] for version in my_versions])
           build_versions = hashicorp_versions - my_versions
